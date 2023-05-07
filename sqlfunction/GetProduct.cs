@@ -1,21 +1,19 @@
-using System;
-using System.IO;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Microsoft.Data.SqlClient;
+using System;
 using System.Collections.Generic;
-using Azure;
+using System.Threading.Tasks;
 
 namespace sqlfunction
 {
     public static class GetProduct
     {
-        [FunctionName("GetProduct")]
+        [FunctionName("GetProducts")]
         public static async Task<IActionResult> RunProducts(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req,
             ILogger log)
@@ -46,7 +44,7 @@ namespace sqlfunction
             }
             _conn.Close();
 
-            return new OkObjectResult(_products);
+            return new OkObjectResult(JsonConvert.SerializeObject(_products));
         }
 
         [FunctionName("GetProductById")]
@@ -75,7 +73,7 @@ namespace sqlfunction
                     product.ProductName = reader.GetString(1);
                     product.Quantity = reader.GetInt32(2);
                     var response = product;
-                _conn.Close();
+                    _conn.Close();
                     return new OkObjectResult(response);
                 }
             }
@@ -89,7 +87,6 @@ namespace sqlfunction
 
         private static SqlConnection GetConnection()
         {
-
             string connectionString = Environment.GetEnvironmentVariable("SQLAZURECONNSTR_SQLConnectionString");
             return new SqlConnection(connectionString);
         }
