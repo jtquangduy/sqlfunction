@@ -89,7 +89,8 @@ namespace sqlfunction
 
         private static SqlConnection GetConnection()
         {
-            string connectionString = "Server=tcp:jtqdappserver.database.windows.net,1433;Initial Catalog=appdb;Persist Security Info=False;User ID=sqladmin;Password=hoilamgi01@abcd;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+
+            string connectionString = Environment.GetEnvironmentVariable("SQLAZURECONNSTR_SQLConnectionString");
             return new SqlConnection(connectionString);
         }
     }
